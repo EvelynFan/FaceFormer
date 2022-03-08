@@ -27,101 +27,94 @@ Check the required packages in `requirements.txt`.
 
 ## Training and Testing on VOCASET
 
-####  Data
+###  Data
  
-Request the VOCASET data from the [https://voca.is.tue.mpg.de/](https://voca.is.tue.mpg.de/). Place the downloaded files `data_verts.npy`, `raw_audio_fixed.pkl`, `templates.pkl` and `subj_seq_to_idx.pkl` in `vocaset/VOCASET/`. Download "FLAME_sample.ply" from [voca](https://github.com/TimoBolkart/voca/tree/master/template) and put it in `VOCASET/templates`.
+Request the VOCASET data from [https://voca.is.tue.mpg.de/](https://voca.is.tue.mpg.de/). Place the downloaded files `data_verts.npy`, `raw_audio_fixed.pkl`, `templates.pkl` and `subj_seq_to_idx.pkl` in `vocaset/VOCASET/`. Download "FLAME_sample.ply" from [voca](https://github.com/TimoBolkart/voca/tree/master/template) and put it in `VOCASET/templates`.
 
-####  Data Preparation
+###  Data Preparation
 
 - Read the vertices/audio data and convert them to .npy/.wav files stored in `vocaset/VOCASET/vertices_npy` and `vocaset/VOCASET/wav`.
 
-```
-cd vocaset
-python process_voca_data.py
-```
+	```
+	cd vocaset
+	python process_voca_data.py
+	```
 
-#### Demo
+### Demo
 
 - To animate a mesh given an audio signal, download the [pretrained model]() and put it in the folder `vocaset/VOCASET`, run: 
 
-```
-cd vocaset
-python demo.py --wav_path "VOCASET/demo/wav/test.wav"
-```
+	```
+	cd vocaset
+	python demo.py --wav_path "VOCASET/demo/wav/test.wav"
+	```
 
-#### Training and Testing
+### Training and Testing
 
 - To train the model and obtain the results on the testing set, run:
 
-```
-cd vocaset
-python main.py
-```
+	```
+	cd vocaset
+	python main.py
+	```
+	The results will be available in the `vocaset/VOCASET/result` folder, and the models will be stored in the `vocaset/VOCASET/save` folder.
 
-The results will be available in the `vocaset/VOCASET/result` folder, and the models will be stored in the `vocaset/VOCASET/save` folder.
-
-#### Visualization
+### Visualization
 
 - To visualize the results, run:
 
-```
-cd vocaset
-python render.py
-```
-
-The rendered videos will be available in the `vocaset/VOCASET/output` folder.
+	```
+	cd vocaset
+	python render.py
+	```
+	The rendered videos will be available in the `vocaset/VOCASET/output` folder.
 
 ## Training and Testing on BIWI
 
-#### Data
+### Data
  
 Request the dataset from [Biwi 3D Audiovisual Corpus of Affective Communication](https://data.vision.ee.ethz.ch/cvl/datasets/b3dac2.en.html). The dataset contains the following subfolders:
 
 - 'faces' contains the binary (.vl) files for the tracked facial geometries. 
-
 - 'rigid_scans' contains the templates stored as .obj files. 
-
 - 'audio' contains audio signals stored as .wav files. 
 
 Place the folders 'faces' and 'rigid_scans' in `BIWI_data` and place the wav files in `BIWI_data/wav`.
 
-#### Demo
+### Demo
 
 - To animate a mesh given an audio signal, download the [pretrained model]() and put it in the folder `biwi/BIWI_data/`, run: 
 
-```
-cd biwi
-python demo.py --wav_path "BIWI_data/demo/wav/test.wav"
-```
+	```
+	cd biwi
+	python demo.py --wav_path "BIWI_data/demo/wav/test.wav"
+	```
 
-####  Data Preparation
+###  Data Preparation
 
 - (to do) Read the geometry data and convert them to .npy files stored in `biwi/BIWI_data/vertices_npy`.
 
-#### Training and Testing
+### Training and Testing
 
 - To train the model and obtain the results on testing set, run:
 
-```
-cd biwi
-python main.py
-```
+	```
+	cd biwi
+	python main.py
+	```
+	The results will be available in the `biwi/BIWI_data/result` folder, and the models will be stored in the `biwi/BIWI_data/save` folder.
 
-The results will be available in the `biwi/BIWI_data/result` folder, and the models will be stored in the `biwi/BIWI_data/save` folder.
-
-#### Visualization
+### Visualization
 
 - To visualize the results, run:
 
-```
-cd biwi
-python render.py
-```
+	```
+	cd biwi
+	python render.py
+	```
+	The rendered videos will be available in the `biwi/BIWI_data/output` folder.
 
-The rendered videos will be available in the `biwi/BIWI_data/output` folder.
-
-
-### Citation
+## Citation
 
 If you find this code useful for your work, please consider citing:
 ```
@@ -133,7 +126,7 @@ year={2022}
 }
 ```
 
-### Acknowledgement
+## Acknowledgement
 
 We gratefully acknowledge ETHZ-CVL for providing the [B3D(AC)2](https://data.vision.ee.ethz.ch/cvl/datasets/b3dac2.en.html) database and MPI-IS for releasing the [VOCASET](https://voca.is.tue.mpg.de/) dataset. The implementation of wav2vec2 is built upon [huggingface-transformers](https://github.com/huggingface/transformers/blob/master/src/transformers/models/wav2vec2/modeling_wav2vec2.py), and the temporal bias is modified from [ALiBi](https://github.com/ofirpress/attention_with_linear_biases). We use [MPI-IS/mesh](https://github.com/MPI-IS/mesh) for mesh processing and [VOCA/rendering](https://github.com/TimoBolkart/voca) for rendering. We thank the authors for their great works.
 

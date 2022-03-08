@@ -30,25 +30,28 @@ Check the required packages in `requirements.txt`.
  
 Request the VOCASET data from [https://voca.is.tue.mpg.de/](https://voca.is.tue.mpg.de/). Place the downloaded files `data_verts.npy`, `raw_audio_fixed.pkl`, `templates.pkl` and `subj_seq_to_idx.pkl` in `vocaset/VOCASET/`. Download "FLAME_sample.ply" from [voca](https://github.com/TimoBolkart/voca/tree/master/template) and put it in `VOCASET/templates`.
 
-###  Data Preparation
-
-- Read the vertices/audio data and convert them to .npy/.wav files stored in `vocaset/VOCASET/vertices_npy` and `vocaset/VOCASET/wav`.
-	```
-	cd vocaset
-	python process_voca_data.py
-	```
-
 ### Demo
 
-- To animate a mesh given an audio signal, download the [pretrained model]() and put it in the folder `vocaset/VOCASET`, run: 
+- To animate a mesh given an audio signal, download the [pretrained model](https://drive.google.com/file/d/1GUQBk9FqUimoT6UNgU0gyQnjGv-2_Lyp/view?usp=sharing) and put it in the folder `vocaset/VOCASET`, run: 
+
 	```
 	cd vocaset
 	python demo.py --wav_path "VOCASET/demo/wav/test.wav"
 	```
 
+###  Data Preparation
+
+- Read the vertices/audio data and convert them to .npy/.wav files stored in `vocaset/VOCASET/vertices_npy` and `vocaset/VOCASET/wav`:
+
+	```
+	cd vocaset
+	python process_voca_data.py
+	```
+
 ### Training and Testing
 
 - To train the model and obtain the results on the testing set, run:
+
 	```
 	cd vocaset
 	python main.py
@@ -58,6 +61,7 @@ Request the VOCASET data from [https://voca.is.tue.mpg.de/](https://voca.is.tue.
 ### Visualization
 
 - To visualize the results, run:
+
 	```
 	cd vocaset
 	python render.py
@@ -78,7 +82,8 @@ Place the folders 'faces' and 'rigid_scans' in `BIWI_data` and place the wav fil
 
 ### Demo
 
-- To animate a mesh given an audio signal, download the [pretrained model]() and put it in the folder `biwi/BIWI_data/`, run: 
+- To animate a mesh given an audio signal, download the [pretrained model](https://drive.google.com/file/d/1WR1P25EE7Aj1nDZ4MeRsqdyGnGzmkbPX/view?usp=sharing) and put it in the folder `biwi/BIWI_data/`, run: 
+
 	```
 	cd biwi
 	python demo.py --wav_path "BIWI_data/demo/wav/test.wav"
@@ -91,6 +96,7 @@ Place the folders 'faces' and 'rigid_scans' in `BIWI_data` and place the wav fil
 ### Training and Testing
 
 - To train the model and obtain the results on testing set, run:
+
 	```
 	cd biwi
 	python main.py
@@ -100,6 +106,7 @@ Place the folders 'faces' and 'rigid_scans' in `BIWI_data` and place the wav fil
 ### Visualization
 
 - To visualize the results, run:
+
 	```
 	cd biwi
 	python render.py
@@ -117,7 +124,6 @@ booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern
 year={2022}
 }
 ```
-
 ## Acknowledgement
 
 We gratefully acknowledge ETHZ-CVL for providing the [B3D(AC)2](https://data.vision.ee.ethz.ch/cvl/datasets/b3dac2.en.html) database and MPI-IS for releasing the [VOCASET](https://voca.is.tue.mpg.de/) dataset. The implementation of wav2vec2 is built upon [huggingface-transformers](https://github.com/huggingface/transformers/blob/master/src/transformers/models/wav2vec2/modeling_wav2vec2.py), and the temporal bias is modified from [ALiBi](https://github.com/ofirpress/attention_with_linear_biases). We use [MPI-IS/mesh](https://github.com/MPI-IS/mesh) for mesh processing and [VOCA/rendering](https://github.com/TimoBolkart/voca) for rendering. We thank the authors for their great works.

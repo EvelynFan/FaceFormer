@@ -17,7 +17,6 @@ The source code for the paper:
 ## Dependencies
 
 Check the required packages in `requirements.txt`.
-
 - transformers
 - librosa
 - trimesh
@@ -34,7 +33,6 @@ Request the VOCASET data from [https://voca.is.tue.mpg.de/](https://voca.is.tue.
 ###  Data Preparation
 
 - Read the vertices/audio data and convert them to .npy/.wav files stored in `vocaset/VOCASET/vertices_npy` and `vocaset/VOCASET/wav`.
-
 	```
 	cd vocaset
 	python process_voca_data.py
@@ -43,7 +41,6 @@ Request the VOCASET data from [https://voca.is.tue.mpg.de/](https://voca.is.tue.
 ### Demo
 
 - To animate a mesh given an audio signal, download the [pretrained model]() and put it in the folder `vocaset/VOCASET`, run: 
-
 	```
 	cd vocaset
 	python demo.py --wav_path "VOCASET/demo/wav/test.wav"
@@ -52,7 +49,6 @@ Request the VOCASET data from [https://voca.is.tue.mpg.de/](https://voca.is.tue.
 ### Training and Testing
 
 - To train the model and obtain the results on the testing set, run:
-
 	```
 	cd vocaset
 	python main.py
@@ -62,7 +58,6 @@ Request the VOCASET data from [https://voca.is.tue.mpg.de/](https://voca.is.tue.
 ### Visualization
 
 - To visualize the results, run:
-
 	```
 	cd vocaset
 	python render.py
@@ -96,7 +91,6 @@ Place the folders 'faces' and 'rigid_scans' in `BIWI_data` and place the wav fil
 ### Training and Testing
 
 - To train the model and obtain the results on testing set, run:
-
 	```
 	cd biwi
 	python main.py
@@ -106,11 +100,11 @@ Place the folders 'faces' and 'rigid_scans' in `BIWI_data` and place the wav fil
 ### Visualization
 
 - To visualize the results, run:
-
 	```
 	cd biwi
 	python render.py
-	```The rendered videos will be available in the `biwi/BIWI_data/output` folder.
+	```
+	The rendered videos will be available in the `biwi/BIWI_data/output` folder.
 
 ## Citation
 

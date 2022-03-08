@@ -1,8 +1,8 @@
 ## FaceFormer
 
-Implementation of the paper:
+The source code for the paper:
 
-**FaceFormer: Speech-Driven 3D Facial Animation with Transformers**. ***CPVR 2022*** [[PDF]](https://arxiv.org/pdf/2112.05329.pdf)
+**FaceFormer: Speech-Driven 3D Facial Animation with Transformers**. ***CVPR 2022*** [[PDF]](https://arxiv.org/pdf/2112.05329.pdf)
 
 <p align="center">
 <img src="framework.jpg" width="80%" />

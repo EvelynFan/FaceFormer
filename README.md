@@ -84,7 +84,6 @@ Place the folders 'faces' and 'rigid_scans' in `BIWI_data` and place the wav fil
 ### Demo
 
 - To animate a mesh given an audio signal, download the [pretrained model]() and put it in the folder `biwi/BIWI_data/`, run: 
-
 	```
 	cd biwi
 	python demo.py --wav_path "BIWI_data/demo/wav/test.wav"
@@ -111,8 +110,7 @@ Place the folders 'faces' and 'rigid_scans' in `BIWI_data` and place the wav fil
 	```
 	cd biwi
 	python render.py
-	```
-	The rendered videos will be available in the `biwi/BIWI_data/output` folder.
+	```The rendered videos will be available in the `biwi/BIWI_data/output` folder.
 
 ## Citation
 

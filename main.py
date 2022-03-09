@@ -13,7 +13,7 @@ from data_loader import get_dataloaders
 from faceformer import Faceformer
 
 def trainer(args, train_loader, dev_loader, model, optimizer, criterion, epoch=100):
-    save_path = os.path.join(args.data_path,args.save_path)
+    save_path = os.path.join(args.dataset,args.save_path)
     if os.path.exists(save_path):
         shutil.rmtree(save_path)
     os.makedirs(save_path)
@@ -45,8 +45,9 @@ def trainer(args, train_loader, dev_loader, model, optimizer, criterion, epoch=1
         for audio, vertice, template, one_hot_all,file_name in dev_loader:
             # to gpu
             audio, vertice, template, one_hot_all= audio.to(device="cuda"), vertice.to(device="cuda"), template.to(device="cuda"), one_hot_all.to(device="cuda")
-            if file_name[0][:2] in train_subjects_list:
-                condition_subject = file_name[0][:2]
+            train_subject = "_".join(file_name.split("_")[:-1])
+            if train_subject in train_subjects_list:
+                condition_subject = train_subject
                 iter = train_subjects_list.index(condition_subject)
                 one_hot = one_hot_all[:,iter,:]
                 loss = model(audio, template,  vertice, one_hot, criterion)
@@ -68,12 +69,12 @@ def trainer(args, train_loader, dev_loader, model, optimizer, criterion, epoch=1
 
 @torch.no_grad()
 def test(args, model, test_loader,epoch):
-    result_path = os.path.join(args.data_path,args.result_path)
+    result_path = os.path.join(args.dataset,args.result_path)
     if os.path.exists(result_path):
         shutil.rmtree(result_path)
     os.makedirs(result_path)
 
-    save_path = os.path.join(args.data_path,args.save_path)
+    save_path = os.path.join(args.dataset,args.save_path)
     train_subjects_list = [i for i in args.train_subjects.split(" ")]
 
     model.load_state_dict(torch.load(os.path.join(save_path, '{}_model.pth'.format(epoch))))
@@ -83,9 +84,10 @@ def test(args, model, test_loader,epoch):
     for audio, vertice, template, one_hot_all, file_name in test_loader:
         # to gpu
         audio, vertice, template, one_hot_all= audio.to(device="cuda"), vertice.to(device="cuda"), template.to(device="cuda"), one_hot_all.to(device="cuda")
-        if file_name[0][:2] in train_subjects_list:
-            condition_subject = file_name[0][:2]
-            iter = train_subjects_list.index(file_name[0][:2])
+        train_subject = "_".join(file_name.split("_")[:-1])
+        if train_subject in train_subjects_list:
+            condition_subject = train_subject
+            iter = train_subjects_list.index(condition_subject)
             one_hot = one_hot_all[:,iter,:]
             prediction = model.predict(audio, template, one_hot)
             prediction = prediction.squeeze() # (seq_len, V*3)
@@ -102,20 +104,28 @@ def count_parameters(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--lr", type=float, default=0.0001)
-    parser.add_argument("--vertice_dim", type=int, default=23370*3)
-    parser.add_argument("--wav_path", type=str, default= "BIWI_data/wav")
-    parser.add_argument("--vertices_path", type=str, default="BIWI_data/vertices_npy")
-    parser.add_argument("--gradient_accumulation_steps", type=int, default=1)
-    parser.add_argument("--max_epoch", type=int, default=100)
+    parser = argparse.ArgumentParser(description='FaceFormer: Speech-Driven 3D Facial Animation with Transformers')
+    parser.add_argument("--lr", type=float, default=0.0001, help='learning rate')
+    parser.add_argument("--dataset", type=str, default="VOCASET", help='VOCASET or BIWI')
+    parser.add_argument("--vertice_dim", type=int, default=5023*3, help='number of vertices - 5023*3 for vocaset; 23370*3 for BIWI')
+    parser.add_argument("--feature_dim", type=int, default=64, help='64 for VOCASET; 128 for BIWI')
+    parser.add_argument("--period", type=int, default=30, help='period in PPE - 30 for VOCASET; 25 for BIWI')
+    parser.add_argument("--wav_path", type=str, default= "wav", help='path of the audio signals')
+    parser.add_argument("--vertices_path", type=str, default="vertices_npy", help='path of the ground truth')
+    parser.add_argument("--gradient_accumulation_steps", type=int, default=1, help='gradient accumulation')
+    parser.add_argument("--max_epoch", type=int, default=100, help='number of epochs')
     parser.add_argument("--device", type=str, default="cuda")
-    parser.add_argument("--train_subjects", type=str, default="F2 F3 F4 M3 M4 M5")
-    parser.add_argument("--val_subjects", type=str, default="F2 F3 F4 M3 M4 M5")
-    parser.add_argument("--test_subjects", type=str, default="F1 F5 F6 F7 F8 M1 M2 M6")
-    parser.add_argument("--data_path", type=str, default="BIWI_data")
-    parser.add_argument("--save_path", type=str, default="save")
-    parser.add_argument("--result_path", type=str, default="result")
+    parser.add_argument("--template_file", type=str, default="templates.pkl", help='path of the personalized templates')
+    parser.add_argument("--save_path", type=str, default="save", help='path of the trained models')
+    parser.add_argument("--result_path", type=str, default="result", help='path to the predictions')
+    parser.add_argument("--train_subjects", type=str, default="FaceTalk_170728_03272_TA"
+       " FaceTalk_170904_00128_TA FaceTalk_170725_00137_TA FaceTalk_170915_00223_TA"
+       " FaceTalk_170811_03274_TA FaceTalk_170913_03279_TA"
+       " FaceTalk_170904_03276_TA FaceTalk_170912_03278_TA")
+    parser.add_argument("--val_subjects", type=str, default="FaceTalk_170811_03275_TA"
+       " FaceTalk_170908_03277_TA")
+    parser.add_argument("--test_subjects", type=str, default="FaceTalk_170809_00138_TA"
+       " FaceTalk_170731_00024_TA")
     args = parser.parse_args()
 
     #build model
@@ -136,7 +146,6 @@ def main():
     model = trainer(args, dataset["train"], dataset["valid"],model, optimizer, criterion, epoch=args.max_epoch)
     
     test(args, model, dataset["test"], epoch=args.max_epoch)
-    
     
 if __name__=="__main__":
     main()

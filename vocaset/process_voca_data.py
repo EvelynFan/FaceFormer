@@ -8,7 +8,6 @@ from scipy.io import wavfile
 
 def load_data(args):
     face_vert_mmap = np.load(args.verts_path, mmap_mode='r+')
-    templates_data = pickle.load(open(args.templates_path, 'rb'), encoding='latin1')
     raw_audio = pickle.load(open(args.raw_audio_path, 'rb'), encoding='latin1')
     data2array_verts = pickle.load(open(args.data2array_verts_path, 'rb'))
     return face_vert_mmap,raw_audio,data2array_verts
@@ -35,13 +34,12 @@ def generate_wav(args,raw_audio):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--verts_path", type=str, default="./VOCASET/data_verts.npy")
-    parser.add_argument("--vertices_npy_path", type=str, default="./VOCASET/vertices_npy/")
+    parser.add_argument("--verts_path", type=str, default="data_verts.npy")
+    parser.add_argument("--vertices_npy_path", type=str, default="vertices_npy")
     parser.add_argument("--vertices_dim", type=int, default=5023*3)
-    parser.add_argument("--raw_audio_path", type=str, default='./VOCASET/raw_audio_fixed.pkl')
-    parser.add_argument("--wav_path", type=str, default='./VOCASET/wav/')
-    parser.add_argument("--templates_path", type=str, default='./VOCASET/templates.pkl')
-    parser.add_argument("--data2array_verts_path", type=str, default='./VOCASET/subj_seq_to_idx.pkl')
+    parser.add_argument("--raw_audio_path", type=str, default='raw_audio_fixed.pkl')
+    parser.add_argument("--wav_path", type=str, default='wav')
+    parser.add_argument("--data2array_verts_path", type=str, default='subj_seq_to_idx.pkl')
     args = parser.parse_args()
 
     face_vert_mmap,raw_audio,data2array_verts = load_data(args)

@@ -10,11 +10,16 @@ import pyrender
 import trimesh
 from psbody.mesh import Mesh
 
-# The rendering part is adapted from https://github.com/TimoBolkart/voca/blob/master/utils/rendering.py
+# The implementation of rendering is borrowed from VOCA: https://github.com/TimoBolkart/voca/blob/master/utils/rendering.py
 def render_mesh_helper(args,mesh, t_center, rot=np.zeros(3), tex_img=None,  z_offset=0):
-    camera_params = {'c': np.array([400, 400]),
-                     'k': np.array([-0.19816071, 0.92822711, 0, 0, 0]),
-                     'f': np.array([4754.97941935 / 8, 4754.97941935 / 8])}
+    if args.dataset == "BIWI":
+        camera_params = {'c': np.array([400, 400]),
+                         'k': np.array([-0.19816071, 0.92822711, 0, 0, 0]),
+                         'f': np.array([4754.97941935 / 8, 4754.97941935 / 8])}
+    elif args.dataset == "VOCASET":
+        camera_params = {'c': np.array([400, 400]),
+                         'k': np.array([-0.19816071, 0.92822711, 0, 0, 0]),
+                         'f': np.array([4754.97941935 / 2, 4754.97941935 / 2])}
 
     frustum = {'near': 0.01, 'far': 3.0, 'height': 800, 'width': 800}
 
@@ -109,19 +114,18 @@ def render_sequence_meshes(args,sequence_vertices, template, out_path,predicted_
     call(cmd)
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--render_template_path", type=str, default="./BIWI_data/templates/")
-    parser.add_argument('--background_black', type=bool,default=True)
-    parser.add_argument('--fps', type=int,default=25)
-    parser.add_argument("--vertice_dim", type=int, default=23370*3)
-    parser.add_argument("--data_path", type=str, default="BIWI_data")
-    parser.add_argument("--pred_path", type=str, default="result")
-    parser.add_argument("--output", type=str, default="output")
+    parser = argparse.ArgumentParser(description='FaceFormer: Speech-Driven 3D Facial Animation with Transformers')
+    parser.add_argument("--dataset", type=str, default="VOCASET", help='VOCASET or BIWI')
+    parser.add_argument("--render_template_path", type=str, default="templates", help='path of the mesh in FLAME/BIWI topology')
+    parser.add_argument('--background_black', type=bool, default=True, help='whether to use black background')
+    parser.add_argument('--fps', type=int,default=30, help='frame rate - 30 for VOCASET; 25 for BIWI')
+    parser.add_argument("--vertice_dim", type=int, default=5023*3, help='number of vertices - 5023*3 for VOCASET; 23370*3 for BIWI')
+    parser.add_argument("--pred_path", type=str, default="result", help='path of the predictions')
+    parser.add_argument("--output", type=str, default="output", help='path of the rendered video sequences')
     args = parser.parse_args()
 
-    template_path = args.render_template_path
-    pred_path = os.path.join(args.data_path,args.pred_path)
-    output_path = os.path.join(args.data_path,args.output)
+    pred_path = os.path.join(args.dataset,args.pred_path)
+    output_path = os.path.join(args.dataset,args.output)
     if os.path.exists(output_path):
         shutil.rmtree(output_path)
     os.makedirs(output_path)
@@ -129,9 +133,12 @@ def main():
     for file in os.listdir(pred_path):
         if file.endswith("npy"):
             predicted_vertices_path = os.path.join(pred_path,file)
-            template_file = os.path.join(template_path,file.split("_")[0]+".ply")
+            if args.dataset == "BIWI":
+                template_file = os.path.join(args.dataset, args.render_template_path, "BIWI.ply")
+            elif args.dataset == "VOCASET":
+                template_file = os.path.join(args.dataset, args.render_template_path, "FLAME_sample.ply")
             print("rendering: ", file)
-            
+        
             template = Mesh(filename=template_file)
             vt, ft = None, None
             tex_img = None

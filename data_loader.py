@@ -21,33 +21,35 @@ class Dataset(data.Dataset):
 
     def __getitem__(self, index):
         """Returns one data pair (source and target)."""
+        # seq_len, fea_dim
         file_name = self.data[index]["name"]
         audio = self.data[index]["audio"]
         vertice = self.data[index]["vertice"]
         template = self.data[index]["template"]
         if self.data_type == "train":
-            one_hot = self.one_hot_labels[self.subjects_dict["train"].index(file_name.split("_sentence")[0])]
+            subject = "_".join(a.split("_")[:-1])
+            one_hot = self.one_hot_labels[self.subjects_dict["train"].index(subject)]
         else:
             one_hot = self.one_hot_labels
-
         return torch.FloatTensor(audio),torch.FloatTensor(vertice), torch.FloatTensor(template), torch.FloatTensor(one_hot), file_name
 
     def __len__(self):
         return self.len
 
-def read_data(args,template_file = "VOCASET/templates.pkl"):
+def read_data(args):
     print("Loading data...")
     data = defaultdict(dict)
     train_data = []
     valid_data = []
     test_data = []
 
-    audio_path = args.wav_path
-    vertices_path = args.vertices_path
+    audio_path = os.path.join(args.dataset, args.wav_path)
+    vertices_path = os.path.join(args.dataset, args.vertices_path)
     processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
 
+    template_file = os.path.join(args.dataset, args.template_file)
     with open(template_file, 'rb') as fin:
-        templates = pickle.load(fin, encoding='latin1')
+        templates = pickle.load(fin)
     
     for r, ds, fs in os.walk(audio_path):
         for f in tqdm(fs):
@@ -57,30 +59,34 @@ def read_data(args,template_file = "VOCASET/templates.pkl"):
                 input_values = np.squeeze(processor(speech_array,sampling_rate=16000).input_values)
                 key = f.replace("wav", "npy")
                 data[key]["audio"] = input_values
-                temp = templates[f.split("_sentence")[0]]
+                temp = templates[f.split("_")[0]]
                 data[key]["name"] = f
-                data[key]["template"] = temp.reshape((-1)) # (5023, 3) -> (5023*3)
+                data[key]["template"] = temp.reshape((-1)) 
                 vertice_path = os.path.join(vertices_path,f.replace("wav", "npy"))
                 if not os.path.exists(vertice_path):
                     del data[key]
                 else:
-                    data[key]["vertice"] = np.load(vertice_path,allow_pickle=True)[::2,:]#due to the memory limit
+                    if args.dataset == "VOCASET":
+                        data[key]["vertice"] = np.load(vertice_path,allow_pickle=True)[::2,:]#due to the memory limit
+                    elif args.dataset == "BIWI":
+                        data[key]["vertice"] = np.load(vertice_path,allow_pickle=True)
 
     subjects_dict = {}
     subjects_dict["train"] = [i for i in args.train_subjects.split(" ")]
     subjects_dict["val"] = [i for i in args.val_subjects.split(" ")]
     subjects_dict["test"] = [i for i in args.test_subjects.split(" ")]
+
+    splits = {'VOCASET':{'train':range(1,41),'val':range(21,41),'test':range(21,41)},
+     'BIWI':{'train':range(1,33),'val':range(33,37),'test':range(37,41)}
    
     for k, v in data.items():
-        # hard code 
-        subject_id = k.split("_sentence")[0]
+        subject_id = "_".join(k.split("_")[:-1])
         sentence_id = int(k.split(".")[0][-2:])
-        #follow the same split as VOCA: https://github.com/TimoBolkart/voca/blob/master/config_parser.py
-        if subject_id in subjects_dict["train"] and sentence_id>0 and sentence_id<=40:
+        if subject_id in subjects_dict["train"] and sentence_id in splits[args.dataset]['train']:
             train_data.append(v)
-        if subject_id in subjects_dict["val"] and sentence_id>20 and sentence_id<=40:
+        if subject_id in subjects_dict["val"] and sentence_id in splits[args.dataset]['val']:
             valid_data.append(v)
-        if subject_id in subjects_dict["test"] and sentence_id>20 and sentence_id<=40:
+        if subject_id in subjects_dict["test"] and sentence_id in splits[args.dataset]['test']:
             test_data.append(v)
 
     print(len(train_data), len(valid_data), len(test_data))

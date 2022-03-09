@@ -46,19 +46,19 @@ Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1
 
 - to animate a mesh in BIWI topology, run: 
 	```
-	python demo.py --model_name biwi --wav_path "demo/wav/test.wav" --dataset BIWI --vertice_dim 23370*3  --train_subjects "F2 F3 F4 M3 M4 M5" --test_subjects "F1 F5 F6 F7 F8 M1 M2 M6"
+	python demo.py --model_name biwi --wav_path "demo/wav/test.wav" --dataset BIWI --vertice_dim 70110  --feature_dim 128 --period 25 --fps 25 --train_subjects "F2 F3 F4 M3 M4 M5" --test_subjects "F1 F5 F6 F7 F8 M1 M2 M6" --condition M3 --subject M1
 	```
 
 - to animate a mesh in FLAME topology, run: 
 	```
-	python demo.py --model_name vocaset --wav_path "demo/wav/test.wav" --dataset VOCASET --vertice_dim 5023*3 --train_subjects "FaceTalk_170728_03272_TA FaceTalk_170904_00128_TA FaceTalk_170725_00137_TA FaceTalk_170915_00223_TA FaceTalk_170811_03274_TA FaceTalk_170913_03279_TA FaceTalk_170904_03276_TA FaceTalk_170912_03278_TA" --test_subjects "FaceTalk_170809_00138_TA FaceTalk_170731_00024_TA"
+	python demo.py --model_name vocaset --wav_path "demo/wav/test.wav" --dataset vocaset --vertice_dim 15069 --feature_dim 64 --period 30  --fps 30  --train_subjects "FaceTalk_170728_03272_TA FaceTalk_170904_00128_TA FaceTalk_170725_00137_TA FaceTalk_170915_00223_TA FaceTalk_170811_03274_TA FaceTalk_170913_03279_TA FaceTalk_170904_03276_TA FaceTalk_170912_03278_TA" --test_subjects "FaceTalk_170809_00138_TA FaceTalk_170731_00024_TA" --condition FaceTalk_170913_03279_TA --subject FaceTalk_170809_00138_TA
 	```
 
 ## Training and Testing on VOCASET
 
 ###  Data Preparation
 
-- Read the vertices/audio data and convert them to .npy/.wav files stored in `VOCASET/vertices_npy` and `VOCASET/wav`:
+- Read the vertices/audio data and convert them to .npy/.wav files stored in `vocaset/vertices_npy` and `vocaset/wav`:
 
 	```
 	cd VOCASET
@@ -70,18 +70,18 @@ Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1
 - To train the model on VOCASET and obtain the results on the testing set, run:
 
 	```
-	python main.py --dataset VOCASET --vertice_dim 5023*3 --feature_dim 64 --period 30 --train_subjects "FaceTalk_170728_03272_TA FaceTalk_170904_00128_TA FaceTalk_170725_00137_TA FaceTalk_170915_00223_TA FaceTalk_170811_03274_TA FaceTalk_170913_03279_TA FaceTalk_170904_03276_TA FaceTalk_170912_03278_TA" --val_subjects "FaceTalk_170811_03275_TA FaceTalk_170908_03277_TA" --test_subjects "FaceTalk_170809_00138_TA FaceTalk_170731_00024_TA"
+	python main.py --dataset vocaset --vertice_dim 15069 --feature_dim 64 --period 30 --train_subjects "FaceTalk_170728_03272_TA FaceTalk_170904_00128_TA FaceTalk_170725_00137_TA FaceTalk_170915_00223_TA FaceTalk_170811_03274_TA FaceTalk_170913_03279_TA FaceTalk_170904_03276_TA FaceTalk_170912_03278_TA" --val_subjects "FaceTalk_170811_03275_TA FaceTalk_170908_03277_TA" --test_subjects "FaceTalk_170809_00138_TA FaceTalk_170731_00024_TA"
 	```
-	The results will be available in the `VOCASET/result` folder. The trained models will be saved in the `VOCASET/save` folder.
+	The results will be available in the `vocaset/result` folder. The trained models will be saved in the `vocaset/save` folder.
 
 ### Visualization
 
 - To visualize the results, run:
 
 	```
-	python render.py --dataset VOCASET --vertice_dim 5023*3 --fps 30
+	python render.py --dataset vocaset --vertice_dim 15069 --fps 30
 	```
-	The rendered videos will be available in the `VOCASET/output` folder.
+	The rendered videos will be available in the `vocaset/output` folder.
 
 ## Training and Testing on BIWI
 
@@ -94,7 +94,7 @@ Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1
 - To train the model on BIWI and obtain the results on testing set, run:
 
 	```
-	python main.py --dataset BIWI --vertice_dim 23370*3 --feature_dim 128 --period 25 --train_subjects "F2 F3 F4 M3 M4 M5" --val_subjects "F2 F3 F4 M3 M4 M5" --test_subjects "F1 F5 F6 F7 F8 M1 M2 M6"
+	python main.py --dataset BIWI --vertice_dim 70110 --feature_dim 128 --period 25 --train_subjects "F2 F3 F4 M3 M4 M5" --val_subjects "F2 F3 F4 M3 M4 M5" --test_subjects "F1 F5 F6 F7 F8 M1 M2 M6"
 	```
 	The results will be available in the `BIWI/result` folder. The trained models will be saved in the `BIWI/save` folder.
 
@@ -103,7 +103,7 @@ Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1
 - To visualize the results, run:
 
 	```
-	python render.py --dataset BIWI --vertice_dim 23370*3 --fps 25
+	python render.py --dataset BIWI --vertice_dim 70110 --fps 25
 	```
 	The rendered videos will be available in the `BIWI/output` folder.
 

@@ -39,7 +39,7 @@ def init_biased_mask(n_head, max_seq_len, period):
 # Alignment Bias
 def enc_dec_mask(device, dataset, T, S):
     mask = torch.ones(T, S)
-    if dataset == "biwi":
+    if dataset == "BIWI":
         for i in range(T):
             mask[i, i*2:i*2+2] = 0
     elif dataset == "vocaset":
@@ -150,7 +150,7 @@ class Wav2Vec2Model(Wav2Vec2Model):
         hidden_states = self.feature_extractor(input_values)
         hidden_states = hidden_states.transpose(1, 2)
 
-        if dataset == "biwi":
+        if dataset == "BIWI":
             # cut audio feature
             if hidden_states.shape[1]%2 != 0:
                 hidden_states = hidden_states[:, :-1]
@@ -243,7 +243,7 @@ class Faceformer(nn.Module):
         obj_embedding = self.obj_vector(one_hot)#(1, feature_dim)
         frame_num = vertice.shape[1]
         hidden_states = self.audio_encoder(audio, self.dataset, frame_num=frame_num).last_hidden_state
-        if self.dataset == "biwi":
+        if self.dataset == "BIWI":
             if hidden_states.shape[1]<frame_num*2:
                 vertice = vertice[:, :hidden_states.shape[1]//2]
                 frame_num = hidden_states.shape[1]//2
@@ -285,8 +285,8 @@ class Faceformer(nn.Module):
     def predict(self, audio, template, one_hot):
         template = template.unsqueeze(1) # (1,1, V*3)
         obj_embedding = self.obj_vector(one_hot)
-        hidden_states = self.audio_encoder(audio).last_hidden_state
-        if self.dataset == "biwi":
+        hidden_states = self.audio_encoder(audio, self.dataset).last_hidden_state
+        if self.dataset == "BIWI":
             frame_num = hidden_states.shape[1]//2
         elif self.dataset == "vocaset":
             frame_num = hidden_states.shape[1]

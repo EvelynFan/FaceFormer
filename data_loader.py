@@ -27,7 +27,7 @@ class Dataset(data.Dataset):
         vertice = self.data[index]["vertice"]
         template = self.data[index]["template"]
         if self.data_type == "train":
-            subject = "_".join(a.split("_")[:-1])
+            subject = "_".join(file_name.split("_")[:-1])
             one_hot = self.one_hot_labels[self.subjects_dict["train"].index(subject)]
         else:
             one_hot = self.one_hot_labels
@@ -49,7 +49,7 @@ def read_data(args):
 
     template_file = os.path.join(args.dataset, args.template_file)
     with open(template_file, 'rb') as fin:
-        templates = pickle.load(fin)
+        templates = pickle.load(fin,encoding='latin1')
     
     for r, ds, fs in os.walk(audio_path):
         for f in tqdm(fs):
@@ -59,7 +59,8 @@ def read_data(args):
                 input_values = np.squeeze(processor(speech_array,sampling_rate=16000).input_values)
                 key = f.replace("wav", "npy")
                 data[key]["audio"] = input_values
-                temp = templates[f.split("_")[0]]
+                subject_id = "_".join(key.split("_")[:-1])
+                temp = templates[subject_id]
                 data[key]["name"] = f
                 data[key]["template"] = temp.reshape((-1)) 
                 vertice_path = os.path.join(vertices_path,f.replace("wav", "npy"))
@@ -68,7 +69,7 @@ def read_data(args):
                 else:
                     if args.dataset == "vocaset":
                         data[key]["vertice"] = np.load(vertice_path,allow_pickle=True)[::2,:]#due to the memory limit
-                    elif args.dataset == "biwi":
+                    elif args.dataset == "BIWI":
                         data[key]["vertice"] = np.load(vertice_path,allow_pickle=True)
 
     subjects_dict = {}
@@ -77,7 +78,7 @@ def read_data(args):
     subjects_dict["test"] = [i for i in args.test_subjects.split(" ")]
 
     splits = {'vocaset':{'train':range(1,41),'val':range(21,41),'test':range(21,41)},
-     'biwi':{'train':range(1,33),'val':range(33,37),'test':range(37,41)}
+     'BIWI':{'train':range(1,33),'val':range(33,37),'test':range(37,41)}}
    
     for k, v in data.items():
         subject_id = "_".join(k.split("_")[:-1])

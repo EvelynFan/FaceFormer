@@ -45,7 +45,7 @@ def trainer(args, train_loader, dev_loader, model, optimizer, criterion, epoch=1
         for audio, vertice, template, one_hot_all,file_name in dev_loader:
             # to gpu
             audio, vertice, template, one_hot_all= audio.to(device="cuda"), vertice.to(device="cuda"), template.to(device="cuda"), one_hot_all.to(device="cuda")
-            train_subject = "_".join(file_name.split("_")[:-1])
+            train_subject = "_".join(file_name[0].split("_")[:-1])
             if train_subject in train_subjects_list:
                 condition_subject = train_subject
                 iter = train_subjects_list.index(condition_subject)
@@ -84,7 +84,7 @@ def test(args, model, test_loader,epoch):
     for audio, vertice, template, one_hot_all, file_name in test_loader:
         # to gpu
         audio, vertice, template, one_hot_all= audio.to(device="cuda"), vertice.to(device="cuda"), template.to(device="cuda"), one_hot_all.to(device="cuda")
-        train_subject = "_".join(file_name.split("_")[:-1])
+        train_subject = "_".join(file_name[0].split("_")[:-1])
         if train_subject in train_subjects_list:
             condition_subject = train_subject
             iter = train_subjects_list.index(condition_subject)
@@ -106,10 +106,10 @@ def count_parameters(model):
 def main():
     parser = argparse.ArgumentParser(description='FaceFormer: Speech-Driven 3D Facial Animation with Transformers')
     parser.add_argument("--lr", type=float, default=0.0001, help='learning rate')
-    parser.add_argument("--dataset", type=str, default="vocaset", help='vocaset or biwi')
-    parser.add_argument("--vertice_dim", type=int, default=5023*3, help='number of vertices - 5023*3 for vocaset; 23370*3 for biwi')
-    parser.add_argument("--feature_dim", type=int, default=64, help='64 for vocaset; 128 for biwi')
-    parser.add_argument("--period", type=int, default=30, help='period in PPE - 30 for vocaset; 25 for biwi')
+    parser.add_argument("--dataset", type=str, default="vocaset", help='vocaset or BIWI')
+    parser.add_argument("--vertice_dim", type=int, default=5023*3, help='number of vertices - 5023*3 for vocaset; 23370*3 for BIWI')
+    parser.add_argument("--feature_dim", type=int, default=64, help='64 for vocaset; 128 for BIWI')
+    parser.add_argument("--period", type=int, default=30, help='period in PPE - 30 for vocaset; 25 for BIWI')
     parser.add_argument("--wav_path", type=str, default= "wav", help='path of the audio signals')
     parser.add_argument("--vertices_path", type=str, default="vertices_npy", help='path of the ground truth')
     parser.add_argument("--gradient_accumulation_steps", type=int, default=1, help='gradient accumulation')

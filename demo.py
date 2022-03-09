@@ -135,9 +135,9 @@ def render_sequence(args):
     wav_path = args.wav_path
     test_name = os.path.basename(wav_path).split(".")[0]
     predicted_vertices_path = os.path.join(args.result_path,test_name+".npy")
-    if args.dataset == "BIWI":
+    if args.dataset == "biwi":
         template_file = os.path.join(args.dataset, args.render_template_path, "BIWI.ply")
-    elif args.dataset == "VOCASET":
+    elif args.dataset == "vocaset":
         template_file = os.path.join(args.dataset, args.render_template_path, "FLAME_sample.ply")
          
     print("rendering: ", test_name)
@@ -173,9 +173,9 @@ def render_sequence(args):
 def main():
     parser = argparse.ArgumentParser(description='FaceFormer: Speech-Driven 3D Facial Animation with Transformers')
     parser.add_argument("--model_name", type=str, default="biwi")
-    parser.add_argument("--dataset", type=str, default="BIWI", help='VOCASET or BIWI')
-    parser.add_argument("--fps", type=float, default=25, help='frame rate - 25 for BIWI; 30 for VOCASET')
-    parser.add_argument("--vertice_dim", type=int, default=23370*3, help='number of vertices - 5023*3 for VOCASET; 23370*3 for BIWI')
+    parser.add_argument("--dataset", type=str, default="biwi", help='vocaset or biwi')
+    parser.add_argument("--fps", type=float, default=25, help='frame rate - 25 for biwi; 30 for vocaset')
+    parser.add_argument("--vertice_dim", type=int, default=23370*3, help='number of vertices - 5023*3 for vocaset; 23370*3 for biwi')
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--train_subjects", type=str, default="F2 F3 F4 M3 M4 M5")
     parser.add_argument("--test_subjects", type=str, default="F1 F5 F6 F7 F8 M1 M2 M6")

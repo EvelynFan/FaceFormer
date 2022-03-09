@@ -1,1 +1,1 @@
-`BIWI_data/vertices_npy` and `BIWI_data/wav`
+`biwi/vertices_npy` and `biwi/wav`

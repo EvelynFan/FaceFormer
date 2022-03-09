@@ -42,7 +42,7 @@ Place the folders 'faces' and 'rigid_scans' in `BIWI` and place the wav files in
 
 ## Demo
 
-Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1WR1P25EE7Aj1nDZ4MeRsqdyGnGzmkbPX/view?usp=sharing) and [vocaset.pth](https://drive.google.com/file/d/1GUQBk9FqUimoT6UNgU0gyQnjGv-2_Lyp/view?usp=sharing), and put them in `BIWI` and `VOCASET`, respectively. Given the audio signal,
+Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1WR1P25EE7Aj1nDZ4MeRsqdyGnGzmkbPX/view?usp=sharing) and [vocaset.pth](https://drive.google.com/file/d/1GUQBk9FqUimoT6UNgU0gyQnjGv-2_Lyp/view?usp=sharing). Put the pretrained models in `BIWI` and `VOCASET`, respectively. Given the audio signal,
 
 - to animate a mesh in BIWI topology, run: 
 	```
@@ -72,7 +72,7 @@ Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1
 	```
 	python main.py --dataset VOCASET --vertice_dim 5023*3 --feature_dim 64 --period 30 --train_subjects "FaceTalk_170728_03272_TA FaceTalk_170904_00128_TA FaceTalk_170725_00137_TA FaceTalk_170915_00223_TA FaceTalk_170811_03274_TA FaceTalk_170913_03279_TA FaceTalk_170904_03276_TA FaceTalk_170912_03278_TA" --val_subjects "FaceTalk_170811_03275_TA FaceTalk_170908_03277_TA" --test_subjects "FaceTalk_170809_00138_TA FaceTalk_170731_00024_TA"
 	```
-	The results will be available in the `VOCASET/result` folder, and the models will be stored in the `VOCASET/save` folder.
+	The results will be available in the `VOCASET/result` folder. The trained models will be saved in the `VOCASET/save` folder.
 
 ### Visualization
 
@@ -96,7 +96,7 @@ Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1
 	```
 	python main.py --dataset BIWI --vertice_dim 23370*3 --feature_dim 128 --period 25 --train_subjects "F2 F3 F4 M3 M4 M5" --val_subjects "F2 F3 F4 M3 M4 M5" --test_subjects "F1 F5 F6 F7 F8 M1 M2 M6"
 	```
-	The results will be available in the `BIWI/result` folder, and the models will be stored in the `BIWI/save` folder.
+	The results will be available in the `BIWI/result` folder. The trained models will be saved in the `BIWI/save` folder.
 
 ### Visualization
 

@@ -39,10 +39,10 @@ def init_biased_mask(n_head, max_seq_len, period):
 # Alignment Bias
 def enc_dec_mask(device, dataset, T, S):
     mask = torch.ones(T, S)
-    if dataset == "BIWI":
+    if dataset == "biwi":
         for i in range(T):
             mask[i, i*2:i*2+2] = 0
-    elif dataset == "VOCASET":
+    elif dataset == "vocaset":
         for i in range(T):
             mask[i, i] = 0
     return (mask==1).to(device=device)
@@ -150,13 +150,13 @@ class Wav2Vec2Model(Wav2Vec2Model):
         hidden_states = self.feature_extractor(input_values)
         hidden_states = hidden_states.transpose(1, 2)
 
-        if dataset == "BIWI":
+        if dataset == "biwi":
             # cut audio feature
             if hidden_states.shape[1]%2 != 0:
                 hidden_states = hidden_states[:, :-1]
             if frame_num and hidden_states.shape[1]>frame_num*2:
                 hidden_states = hidden_states[:, :frame_num*2]
-        elif dataset == "VOCASET":
+        elif dataset == "vocaset":
             hidden_states = interpolate_features(hidden_states, 50, 30,output_len=frame_num)
      
         if attention_mask is not None:
@@ -243,7 +243,7 @@ class Faceformer(nn.Module):
         obj_embedding = self.obj_vector(one_hot)#(1, feature_dim)
         frame_num = vertice.shape[1]
         hidden_states = self.audio_encoder(audio, self.dataset, frame_num=frame_num).last_hidden_state
-        if self.dataset == "BIWI":
+        if self.dataset == "biwi":
             if hidden_states.shape[1]<frame_num*2:
                 vertice = vertice[:, :hidden_states.shape[1]//2]
                 frame_num = hidden_states.shape[1]//2
@@ -286,9 +286,9 @@ class Faceformer(nn.Module):
         template = template.unsqueeze(1) # (1,1, V*3)
         obj_embedding = self.obj_vector(one_hot)
         hidden_states = self.audio_encoder(audio).last_hidden_state
-        if self.dataset == "BIWI":
+        if self.dataset == "biwi":
             frame_num = hidden_states.shape[1]//2
-        elif self.dataset == "VOCASET":
+        elif self.dataset == "vocaset":
             frame_num = hidden_states.shape[1]
         hidden_states = self.audio_feature_map(hidden_states)
 

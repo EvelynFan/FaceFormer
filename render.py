@@ -12,11 +12,11 @@ from psbody.mesh import Mesh
 
 # The implementation of rendering is borrowed from VOCA: https://github.com/TimoBolkart/voca/blob/master/utils/rendering.py
 def render_mesh_helper(args,mesh, t_center, rot=np.zeros(3), tex_img=None,  z_offset=0):
-    if args.dataset == "BIWI":
+    if args.dataset == "biwi":
         camera_params = {'c': np.array([400, 400]),
                          'k': np.array([-0.19816071, 0.92822711, 0, 0, 0]),
                          'f': np.array([4754.97941935 / 8, 4754.97941935 / 8])}
-    elif args.dataset == "VOCASET":
+    elif args.dataset == "vocaset":
         camera_params = {'c': np.array([400, 400]),
                          'k': np.array([-0.19816071, 0.92822711, 0, 0, 0]),
                          'f': np.array([4754.97941935 / 2, 4754.97941935 / 2])}
@@ -115,11 +115,11 @@ def render_sequence_meshes(args,sequence_vertices, template, out_path,predicted_
 
 def main():
     parser = argparse.ArgumentParser(description='FaceFormer: Speech-Driven 3D Facial Animation with Transformers')
-    parser.add_argument("--dataset", type=str, default="VOCASET", help='VOCASET or BIWI')
+    parser.add_argument("--dataset", type=str, default="vocaset", help='vocaset or biwi')
     parser.add_argument("--render_template_path", type=str, default="templates", help='path of the mesh in FLAME/BIWI topology')
     parser.add_argument('--background_black', type=bool, default=True, help='whether to use black background')
-    parser.add_argument('--fps', type=int,default=30, help='frame rate - 30 for VOCASET; 25 for BIWI')
-    parser.add_argument("--vertice_dim", type=int, default=5023*3, help='number of vertices - 5023*3 for VOCASET; 23370*3 for BIWI')
+    parser.add_argument('--fps', type=int,default=30, help='frame rate - 30 for vocaset; 25 for biwi')
+    parser.add_argument("--vertice_dim", type=int, default=5023*3, help='number of vertices - 5023*3 for vocaset; 23370*3 for biwi')
     parser.add_argument("--pred_path", type=str, default="result", help='path of the predictions')
     parser.add_argument("--output", type=str, default="output", help='path of the rendered video sequences')
     args = parser.parse_args()
@@ -133,9 +133,9 @@ def main():
     for file in os.listdir(pred_path):
         if file.endswith("npy"):
             predicted_vertices_path = os.path.join(pred_path,file)
-            if args.dataset == "BIWI":
+            if args.dataset == "biwi":
                 template_file = os.path.join(args.dataset, args.render_template_path, "BIWI.ply")
-            elif args.dataset == "VOCASET":
+            elif args.dataset == "vocaset":
                 template_file = os.path.join(args.dataset, args.render_template_path, "FLAME_sample.ply")
             print("rendering: ", file)
         

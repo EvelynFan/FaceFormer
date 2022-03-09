@@ -1,1 +1,1 @@
-`VOCASET/vertices_npy`,  `VOCASET/wav` and `VOCASET/templates`
+`vocaset/vertices_npy`,  `vocaset/wav` and `vocaset/templates`

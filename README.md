@@ -5,7 +5,7 @@ The source code for the paper:
 **FaceFormer: Speech-Driven 3D Facial Animation with Transformers**. ***CVPR 2022*** [[PDF]](https://arxiv.org/pdf/2112.05329.pdf)[[video]](https://evelynfan.github.io/audio2face/)
 
 <p align="center">
-<img src="framework.jpg" width="80%" />
+<img src="framework.jpg" width="70%" />
 </p>
 
 ## Environment
@@ -120,7 +120,5 @@ year={2022}
 ```
 ## Acknowledgement
 
-We gratefully acknowledge ETHZ-CVL for providing the [B3D(AC)2](https://data.vision.ee.ethz.ch/cvl/datasets/b3dac2.en.html) database and MPI-IS for releasing the [VOCASET](https://voca.is.tue.mpg.de/) dataset. The implementation of wav2vec2 is built upon [huggingface-transformers](https://github.com/huggingface/transformers/blob/master/src/transformers/models/wav2vec2/modeling_wav2vec2.py), and the temporal bias is modified from [ALiBi](https://github.com/ofirpress/attention_with_linear_biases). We use [MPI-IS/mesh](https://github.com/MPI-IS/mesh) for mesh processing and [VOCA/rendering](https://github.com/TimoBolkart/voca) for rendering. We thank the authors for their great works.
-
-Any third-party packages are owned by their respective authors and must be used under their respective licenses.
+We gratefully acknowledge ETHZ-CVL for providing the [B3D(AC)2](https://data.vision.ee.ethz.ch/cvl/datasets/b3dac2.en.html) database and MPI-IS for releasing the [VOCASET](https://voca.is.tue.mpg.de/) dataset. The implementation of wav2vec2 is built upon [huggingface-transformers](https://github.com/huggingface/transformers/blob/master/src/transformers/models/wav2vec2/modeling_wav2vec2.py), and the temporal bias is modified from [ALiBi](https://github.com/ofirpress/attention_with_linear_biases). We use [MPI-IS/mesh](https://github.com/MPI-IS/mesh) for mesh processing and [VOCA/rendering](https://github.com/TimoBolkart/voca) for rendering. We thank the authors for their great works. Any third-party packages are owned by their respective authors and must be used under their respective licenses.
 

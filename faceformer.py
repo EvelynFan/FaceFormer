@@ -146,7 +146,7 @@ class Faceformer(nn.Module):
 
         for i in range(frame_num):
             if i==0:
-                vertice_emb = obj_embedding.unsqueeze(1) # (1,1,128)
+                vertice_emb = obj_embedding.unsqueeze(1) # (1,1,feature_dim)
                 style_emb = vertice_emb
                 vertice_input = self.PPE(style_emb)
             else:

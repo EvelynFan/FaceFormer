@@ -2,11 +2,17 @@
 
 PyTorch implementation for the paper:
 
-**FaceFormer: Speech-Driven 3D Facial Animation with Transformers**. ***CVPR 2022*** [[PDF]](https://arxiv.org/pdf/2112.05329.pdf)[[Project Page]](https://evelynfan.github.io/audio2face/)
+> **FaceFormer: Speech-Driven 3D Facial Animation with Transformers**, ***CVPR 2022***.
+>
+> Yingruo Fan, Zhaojiang Lin, Jun Saito, Wenping Wang, Taku Komura
+>
+> [[Paper]](https://arxiv.org/pdf/2112.05329.pdf) [[Project Page]](https://evelynfan.github.io/audio2face/) 
 
 <p align="center">
 <img src="framework.jpg" width="70%" />
 </p>
+
+> Given the raw audio input and a neutral 3D face mesh, our proposed end-to-end Transformer-based architecture, FaceFormer, can autoregressively synthesize a sequence of realistic 3D facial motions with accurate lip movements.
 
 ## Environment
 
@@ -23,11 +29,11 @@ PyTorch implementation for the paper:
 ## Data
 
 ### VOCASET
- 
+
 Request the VOCASET data from [https://voca.is.tue.mpg.de/](https://voca.is.tue.mpg.de/). Place the downloaded files `data_verts.npy`, `raw_audio_fixed.pkl`, `templates.pkl` and `subj_seq_to_idx.pkl` in the folder `VOCASET`. Download "FLAME_sample.ply" from [voca](https://github.com/TimoBolkart/voca/tree/master/template) and put it in `VOCASET/templates`.
 
 ### BIWI
- 
+
 Request the BIWI dataset from [Biwi 3D Audiovisual Corpus of Affective Communication](https://data.vision.ee.ethz.ch/cvl/datasets/b3dac2.en.html). The dataset contains the following subfolders:
 
 - 'faces' contains the binary (.vl) files for the tracked facial geometries. 
@@ -49,7 +55,7 @@ Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1
 	```
 	python demo.py --model_name vocaset --wav_path "demo/wav/test.wav" --dataset vocaset --vertice_dim 15069 --feature_dim 64 --period 30  --fps 30  --train_subjects "FaceTalk_170728_03272_TA FaceTalk_170904_00128_TA FaceTalk_170725_00137_TA FaceTalk_170915_00223_TA FaceTalk_170811_03274_TA FaceTalk_170913_03279_TA FaceTalk_170904_03276_TA FaceTalk_170912_03278_TA" --test_subjects "FaceTalk_170809_00138_TA FaceTalk_170731_00024_TA" --condition FaceTalk_170913_03279_TA --subject FaceTalk_170809_00138_TA
 	```
-	This script will automatically generate the rendered videos in the `demo/output` folder. You can also put your own test audio file (.wav format) under the `demo/wav` folder and specify `--wav_path "demo/wav/test.wav"` accordingly.
+	This script will automatically generate the rendered videos in the `demo/output` folder. You can also put your own test audio file (.wav format) under the `demo/wav` folder and specify the argument `--wav_path "demo/wav/test.wav"` accordingly.
 
 ## Training and Testing on VOCASET
 
@@ -70,6 +76,7 @@ Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1
 	python main.py --dataset vocaset --vertice_dim 15069 --feature_dim 64 --period 30 --train_subjects "FaceTalk_170728_03272_TA FaceTalk_170904_00128_TA FaceTalk_170725_00137_TA FaceTalk_170915_00223_TA FaceTalk_170811_03274_TA FaceTalk_170913_03279_TA FaceTalk_170904_03276_TA FaceTalk_170912_03278_TA" --val_subjects "FaceTalk_170811_03275_TA FaceTalk_170908_03277_TA" --test_subjects "FaceTalk_170809_00138_TA FaceTalk_170731_00024_TA"
 	```
 	The results and the trained models will be saved to `vocaset/result` and `vocaset/save`.
+
 
 ### Visualization
 
@@ -116,15 +123,15 @@ Download the pretrained models from [biwi.pth](https://drive.google.com/file/d/1
 
 ### Training and Testing
 
-- Create the train, val and test splits by specifying `--train_subjects`, `--val_subjects` and `--test_subjects` in `main.py`. 
+- Create the train, val and test splits by specifying the arguments `--train_subjects`, `--val_subjects` and `--test_subjects` in `main.py`. 
 
-- Train a FaceFormer model on your own dataset by specifying `--dataset` and `--vertice_dim` (number of vertices in your mesh * 3) in `main.py`. You might need to adjust `--feature_dim` and `--period` to your dataset. Run `main.py`.
+- Train a FaceFormer model on your own dataset by specifying the arguments `--dataset` and `--vertice_dim` (number of vertices in your mesh * 3) in `main.py`. You might need to adjust `--feature_dim` and `--period` to your dataset. Run `main.py`.
 
 - The results and models will be saved to `<dataset_dir>/result` and `<dataset_dir>/save`.
 
 ### Visualization
 
-- Specify `--dataset`, `--vertice_dim` and `--fps` in `render.py`. Run `render.py` to visualize the results. The rendered videos will be saved to `<dataset_dir>/output`.
+- Specify the arguments `--dataset`, `--vertice_dim` and `--fps` in `render.py`. Run `render.py` to visualize the results. The rendered videos will be saved to `<dataset_dir>/output`.
 
 ## Citation
 

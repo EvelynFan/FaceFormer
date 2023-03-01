@@ -134,4 +134,5 @@ demo/result/
 BIWI/biwi.pth
 vocaset/vocaset.pth
 .idea/
+*.prof
 

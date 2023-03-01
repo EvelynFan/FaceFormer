@@ -69,6 +69,7 @@ def linear_interpolation(features, input_fps, output_fps, output_len=None):
     output_features = F.interpolate(features,size=output_len,align_corners=True,mode='linear')
     return output_features.transpose(1, 2)
 
+
 class Wav2Vec2Model(Wav2Vec2Model):
     def __init__(self, config):
         super().__init__(config)
@@ -100,7 +101,7 @@ class Wav2Vec2Model(Wav2Vec2Model):
                 hidden_states = hidden_states[:, :frame_num*2]
         elif dataset == "vocaset":
             hidden_states = linear_interpolation(hidden_states, 50, 30,output_len=frame_num)
-     
+
         if attention_mask is not None:
             output_lengths = self._get_feat_extract_output_lengths(attention_mask.sum(-1))
             attention_mask = torch.zeros(

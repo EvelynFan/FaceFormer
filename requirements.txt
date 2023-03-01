@@ -11,3 +11,5 @@ trimesh==3.9.27
 pyrender==0.1.45
 opencv-python==4.7.0.68
 
+typing==3.7.4.3
+typing_extensions==4.4.0

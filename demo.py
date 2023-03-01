@@ -3,6 +3,7 @@ import scipy.io.wavfile as wav
 import librosa
 import os,sys,shutil,argparse,copy,pickle
 import math,scipy
+from typing import Optional
 from faceformer import Faceformer
 from transformers import Wav2Vec2FeatureExtractor,Wav2Vec2Processor
 
@@ -18,16 +19,22 @@ import pyrender
 from psbody.mesh import Mesh
 import trimesh
 
-@torch.no_grad()
-def test_model(args):
-    if not os.path.exists(args.result_path):
-        os.makedirs(args.result_path)
 
-    #build model
+def build_model(args) -> Faceformer:
     model = Faceformer(args)
     model.load_state_dict(torch.load(os.path.join(args.dataset, '{}.pth'.format(args.model_name)), map_location=torch.device('cuda')))
     model = model.to(torch.device(args.device))
     model.eval()
+    return model
+
+def get_wav2vec_processor() -> Wav2Vec2Processor:
+    return Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
+
+
+@torch.no_grad()
+def test_model(args, model: Faceformer, processor: Wav2Vec2Processor, sampling_rate: Optional[int] = 16000):
+    if not os.path.exists(args.result_path):
+        os.makedirs(args.result_path)
 
     template_file = os.path.join(args.dataset, args.template_path)
     with open(template_file, 'rb') as fin:
@@ -42,16 +49,15 @@ def test_model(args):
     one_hot = torch.FloatTensor(one_hot).to(device=args.device)
 
     temp = templates[args.subject]
-             
+
     template = temp.reshape((-1))
     template = np.reshape(template,(-1,template.shape[0]))
     template = torch.FloatTensor(template).to(device=args.device)
 
     wav_path = args.wav_path
     test_name = os.path.basename(wav_path).split(".")[0]
-    speech_array, sampling_rate = librosa.load(os.path.join(wav_path), sr=16000)
-    processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
-    audio_feature = np.squeeze(processor(speech_array,sampling_rate=16000).input_values)
+    speech_array, sampling_rate = librosa.load(os.path.join(wav_path), sr=sampling_rate)
+    audio_feature = np.squeeze(processor(speech_array,sampling_rate=sampling_rate).input_values)
     audio_feature = np.reshape(audio_feature,(-1,audio_feature.shape[0]))
     audio_feature = torch.FloatTensor(audio_feature).to(device=args.device)
 
@@ -198,7 +204,8 @@ def main():
     parser.add_argument("--render_template_path", type=str, default="templates", help='path of the mesh in BIWI/FLAME topology')
     args = parser.parse_args()   
 
-    test_model(args)
+    ff_model = build_model(args)
+    test_model(args, ff_model, get_wav2vec_processor(), sampling_rate = None)
     render_sequence(args)
 
 if __name__=="__main__":

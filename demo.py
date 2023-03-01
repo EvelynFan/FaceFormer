@@ -202,7 +202,7 @@ def main():
     parser.add_argument("--background_black", type=bool, default=True, help='whether to use black background')
     parser.add_argument("--template_path", type=str, default="templates.pkl", help='path of the personalized templates')
     parser.add_argument("--render_template_path", type=str, default="templates", help='path of the mesh in BIWI/FLAME topology')
-    args = parser.parse_args()   
+    args = parser.parse_args()
 
     ff_model = build_model(args)
     test_model(args, ff_model, get_wav2vec_processor(), sampling_rate = None)

@@ -19,7 +19,7 @@ def init_biased_mask(n_head, max_seq_len, period):
             closest_power_of_2 = 2**math.floor(math.log2(n)) 
             return get_slopes_power_of_2(closest_power_of_2) + get_slopes(2*closest_power_of_2)[0::2][:n-closest_power_of_2]
     slopes = torch.Tensor(get_slopes(n_head))
-    bias = torch.arange(start=0, end=max_seq_len, step=period).unsqueeze(1).repeat(1,period).view(-1)//(period)
+    bias = torch.div(torch.arange(start=0, end=max_seq_len, step=period).unsqueeze(1).repeat(1,period).view(-1), period, rounding_mode='floor')
     bias = - torch.flip(bias,dims=[0])
     alibi = torch.zeros(max_seq_len, max_seq_len)
     for i in range(max_seq_len):

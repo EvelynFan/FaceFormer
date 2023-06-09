@@ -62,7 +62,7 @@ def test_model(args):
     audio_feature = torch.FloatTensor(audio_feature).to(device=args.device)
     if args.int8_quantization == "dynamic":
         print("Doing int8 quantization...")
-        model = transform_model_to_int8(model)
+        model = transform_model_to_int8(model, audio_feature)
     print("Starting to predict...")
     start_time = time.time()
     prediction = model.predict(audio_feature, template, one_hot)

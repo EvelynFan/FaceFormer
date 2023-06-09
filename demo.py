@@ -5,11 +5,17 @@ import os,sys,shutil,argparse,copy,pickle
 import math,scipy
 from faceformer import Faceformer
 from transformers import Wav2Vec2FeatureExtractor,Wav2Vec2Processor
-
+import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+from torch.ao.quantization import (
+  get_default_qconfig_mapping,
+  get_default_qat_qconfig_mapping,
+  QConfigMapping,
+)
+import torch.quantization.quantize_fx as quantize_fx
+import copy
 import cv2
 import tempfile
 from subprocess import call
@@ -54,10 +60,29 @@ def test_model(args):
     audio_feature = np.squeeze(processor(speech_array,sampling_rate=16000).input_values)
     audio_feature = np.reshape(audio_feature,(-1,audio_feature.shape[0]))
     audio_feature = torch.FloatTensor(audio_feature).to(device=args.device)
-
+    if args.int8_quantization == "dynamic":
+        print("Doing int8 quantization...")
+        model = transform_model_to_int8(model)
+    print("Starting to predict...")
+    start_time = time.time()
     prediction = model.predict(audio_feature, template, one_hot)
+    print("Time for prediction: {}".format(time.time()-start_time))
+    
     prediction = prediction.squeeze() # (seq_len, V*3)
     np.save(os.path.join(args.result_path, test_name), prediction.detach().cpu().numpy())
+
+def transform_model_to_int8(model, input_fp32):
+    model_to_quantize = copy.deepcopy(model)
+    model_to_quantize.eval()
+    qconfig_mapping = QConfigMapping().set_global(torch.ao.quantization.default_dynamic_qconfig)
+    # a tuple of one or more example inputs are needed to trace the model
+    example_inputs = (input_fp32)
+    # prepare
+    model_prepared = quantize_fx.prepare_fx(model_to_quantize, qconfig_mapping, example_inputs)
+    # no calibration needed when we only have dynamic/weight_only quantization
+    # quantize
+    model_quantized = quantize_fx.convert_fx(model_prepared)
+    return model_quantized
 
 # The implementation of rendering is borrowed from VOCA: https://github.com/TimoBolkart/voca/blob/master/utils/rendering.py
 def render_mesh_helper(args,mesh, t_center, rot=np.zeros(3), tex_img=None, z_offset=0):
@@ -196,6 +221,7 @@ def main():
     parser.add_argument("--background_black", type=bool, default=True, help='whether to use black background')
     parser.add_argument("--template_path", type=str, default="templates.pkl", help='path of the personalized templates')
     parser.add_argument("--render_template_path", type=str, default="templates", help='path of the mesh in BIWI/FLAME topology')
+    parser.add_argument("--int8_quantization", type=str, default="", help='')
     args = parser.parse_args()   
 
     test_model(args)

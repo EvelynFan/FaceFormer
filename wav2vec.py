@@ -94,8 +94,9 @@ class Wav2Vec2Model(Wav2Vec2Model):
 
         if dataset == "BIWI":
             # cut audio feature
-            if hidden_states.shape[1]%2 != 0:
-                hidden_states = hidden_states[:, :-1]
+            #TAMIR-COMMENT - changing the hidden states size without boolean flow control so the torch fx proxy will work
+            len_dim1 = hidden_states.shape[1]
+            hidden_states = hidden_states[:, :len_dim1 - (len_dim1 % 2)]
             if frame_num and hidden_states.shape[1]>frame_num*2:
                 hidden_states = hidden_states[:, :frame_num*2]
         elif dataset == "vocaset":

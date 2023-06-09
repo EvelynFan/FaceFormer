@@ -76,7 +76,7 @@ def transform_model_to_int8(model, input_fp32):
     model_to_quantize.eval()
     qconfig_mapping = QConfigMapping().set_global(torch.ao.quantization.default_dynamic_qconfig)
     # a tuple of one or more example inputs are needed to trace the model
-    example_inputs = (input_fp32)
+    example_inputs = (input_fp32,)
     # prepare
     model_prepared = quantize_fx.prepare_fx(model_to_quantize, qconfig_mapping, example_inputs)
     # no calibration needed when we only have dynamic/weight_only quantization

@@ -1,12 +1,11 @@
 torch
 torchvision
 torchaudio
-transformers
+transformers==4.6.1
 numpy
 scipy==1.7.1
 librosa==0.8.1
 tqdm
-pickle
 trimesh==3.9.27
 pyrender==0.1.45
 opencv-python

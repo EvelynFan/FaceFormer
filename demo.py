@@ -24,6 +24,7 @@ import pyrender
 from psbody.mesh import Mesh
 import trimesh
 import random
+from torch.profiler import profile, record_function, ProfilerActivity
 
 @torch.no_grad()
 def test_model(args):
@@ -80,7 +81,11 @@ def test_model(args):
     print_size_of_model(model)
     print("Starting to predict...")
     start_time = time.time()
-    prediction = model.predict(audio_feature, template, one_hot)
+    with profile(activities=[ProfilerActivity.CPU], profile_memory=True) as prof:
+        prediction = model.predict(audio_feature, template, one_hot)
+    print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=20))
+    print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=20))
+
     print("Time for prediction: {}".format(time.time()-start_time))
     
     prediction = prediction.squeeze() # (seq_len, V*3)

@@ -76,7 +76,7 @@ def test_model(args):
     elif args.int8_quantization == "dynamic_eager":
         print("Doing dynamic_eager int8 quantization...")
         model = transform_model_to_int8_eager(model)
-    print("Model size before quantization: ")
+    print("Model size after quantization: ")
     print_size_of_model(model)
     print("Starting to predict...")
     start_time = time.time()

@@ -81,6 +81,7 @@ def test_model(args):
     print_size_of_model(model)
     print("Starting to predict...")
     start_time = time.time()
+    #TODO consider using intel ipex...
     with profile(activities=[ProfilerActivity.CPU],
         profile_memory=True,
         record_shapes=True,

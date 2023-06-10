@@ -23,12 +23,18 @@ os.environ['PYOPENGL_PLATFORM'] = 'osmesa' # egl
 import pyrender
 from psbody.mesh import Mesh
 import trimesh
+import random
 
 @torch.no_grad()
 def test_model(args):
     if not os.path.exists(args.result_path):
         os.makedirs(args.result_path)
 
+    if args.set_seed:
+        torch.manual_seed(42)
+        torch.cuda.manual_seed(42)
+        random.seed(42)
+        np.random.seed(42)
     #build model
     model = Faceformer(args)
     model.load_state_dict(torch.load(os.path.join(args.dataset, '{}.pth'.format(args.model_name)),  map_location=torch.device(args.device)))
@@ -232,6 +238,8 @@ def main():
     parser.add_argument("--template_path", type=str, default="templates.pkl", help='path of the personalized templates')
     parser.add_argument("--render_template_path", type=str, default="templates", help='path of the mesh in BIWI/FLAME topology')
     parser.add_argument("--int8_quantization", type=str, default="", help='')
+    parser.add_argument("--set_seed", type=bool, default=False, help='')
+
     args = parser.parse_args()   
 
     test_model(args)

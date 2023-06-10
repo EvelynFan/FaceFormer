@@ -35,6 +35,7 @@ def test_model(args):
         torch.cuda.manual_seed(42)
         random.seed(42)
         np.random.seed(42)
+        print("Setting seed to 42...")
     #build model
     model = Faceformer(args)
     model.load_state_dict(torch.load(os.path.join(args.dataset, '{}.pth'.format(args.model_name)),  map_location=torch.device(args.device)))

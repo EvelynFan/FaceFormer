@@ -77,7 +77,7 @@ def test_model(args):
 def transform_model_to_int8_eager(model):
     model_int8 = torch.ao.quantization.quantize_dynamic(
         model,  # the original model
-        {torch.nn.Linear, nn.TransformerDecoderLayer, },  # a set of layers to dynamically quantize
+        {torch.nn.Linear},  # a set of layers to dynamically quantize
         dtype=torch.qint8)  # the target dtype for quantized weights
     return model_int8
         

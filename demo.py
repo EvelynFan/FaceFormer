@@ -67,12 +67,17 @@ def test_model(args):
     audio_feature = np.squeeze(processor(speech_array,sampling_rate=16000).input_values)
     audio_feature = np.reshape(audio_feature,(-1,audio_feature.shape[0]))
     audio_feature = torch.FloatTensor(audio_feature).to(device=args.device)
+    print("Model size before quantization: ")
+    print_size_of_model(model)
+
     if args.int8_quantization == "dynamic_fx":
         print("Doing int8 quantization...")
         model = transform_model_to_int8_fx(model, audio_feature)
     elif args.int8_quantization == "dynamic_eager":
         print("Doing dynamic_eager int8 quantization...")
         model = transform_model_to_int8_eager(model)
+    print("Model size before quantization: ")
+    print_size_of_model(model)
     print("Starting to predict...")
     start_time = time.time()
     prediction = model.predict(audio_feature, template, one_hot)
@@ -88,6 +93,11 @@ def transform_model_to_int8_eager(model):
         dtype=torch.qint8)  # the target dtype for quantized weights
     return model_int8
         
+def print_size_of_model(model):
+    torch.save(model.state_dict(), "temp.p")
+    print('Size (MB):', os.path.getsize("temp.p")/1e6)
+    os.remove('temp.p')
+
 def transform_model_to_int8_fx(model, input_fp32):
     model_to_quantize = copy.deepcopy(model)
     model_to_quantize.eval()

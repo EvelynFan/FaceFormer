@@ -9,3 +9,4 @@ tqdm
 trimesh==3.9.27
 pyrender==0.1.45
 opencv-python
+torch_tb_profiler

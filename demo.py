@@ -81,7 +81,11 @@ def test_model(args):
     print_size_of_model(model)
     print("Starting to predict...")
     start_time = time.time()
-    with profile(activities=[ProfilerActivity.CPU], profile_memory=True) as prof:
+    with profile(activities=[ProfilerActivity.CPU],
+        profile_memory=True,
+        record_shapes=True,
+        with_stack=True,
+        on_trace_ready=torch.profiler.tensorboard_trace_handler(f'./logs/faceformer_{args.int8_quantization}')) as prof:
         prediction = model.predict(audio_feature, template, one_hot)
     print(prof.key_averages().table(sort_by="cpu_time_total", row_limit=20))
     print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=20))

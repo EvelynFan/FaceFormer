@@ -60,9 +60,12 @@ def test_model(args):
     audio_feature = np.squeeze(processor(speech_array,sampling_rate=16000).input_values)
     audio_feature = np.reshape(audio_feature,(-1,audio_feature.shape[0]))
     audio_feature = torch.FloatTensor(audio_feature).to(device=args.device)
-    if args.int8_quantization == "dynamic":
+    if args.int8_quantization == "dynamic_fx":
         print("Doing int8 quantization...")
-        model = transform_model_to_int8(model, audio_feature)
+        model = transform_model_to_int8_fx(model, audio_feature)
+    elif args.int8_quantization == "dynamic_eager":
+        print("Doing dynamic_eager int8 quantization...")
+        model = transform_model_to_int8_eager(model)
     print("Starting to predict...")
     start_time = time.time()
     prediction = model.predict(audio_feature, template, one_hot)
@@ -71,7 +74,14 @@ def test_model(args):
     prediction = prediction.squeeze() # (seq_len, V*3)
     np.save(os.path.join(args.result_path, test_name), prediction.detach().cpu().numpy())
 
-def transform_model_to_int8(model, input_fp32):
+def transform_model_to_int8_eager(model):
+    model_int8 = torch.ao.quantization.quantize_dynamic(
+        model,  # the original model
+        {torch.nn.Linear, nn.TransformerDecoderLayer, },  # a set of layers to dynamically quantize
+        dtype=torch.qint8)  # the target dtype for quantized weights
+    return model_int8
+        
+def transform_model_to_int8_fx(model, input_fp32):
     model_to_quantize = copy.deepcopy(model)
     model_to_quantize.eval()
     qconfig_mapping = QConfigMapping().set_global(torch.ao.quantization.default_dynamic_qconfig)

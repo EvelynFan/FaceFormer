@@ -72,6 +72,7 @@ def test_model(args):
     print_size_of_model(model)
 
     if args.int8_quantization == "dynamic_fx":
+        raise NotImplementedError("dynamic_fx quantization is not supported because model is not traceable.")
         print("Doing int8 quantization...")
         model = transform_model_to_int8_fx(model, audio_feature)
     elif args.int8_quantization == "dynamic_eager":

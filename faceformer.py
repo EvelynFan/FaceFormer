@@ -143,22 +143,32 @@ class Faceformer(nn.Module):
         elif self.dataset == "vocaset":
             frame_num = hidden_states.shape[1]
         hidden_states = self.audio_feature_map(hidden_states)
-
         for i in range(frame_num):
             if i==0:
                 vertice_emb = obj_embedding.unsqueeze(1) # (1,1,feature_dim)
-                style_emb = vertice_emb
+                style_emb = vertice_emb # The embedding of the speaker
                 vertice_input = self.PPE(style_emb)
             else:
+                # Encode the motions vertices with the periodic positional encoder
                 vertice_input = self.PPE(vertice_emb)
 
+            # Mask from the paper
             tgt_mask = self.biased_mask[:, :vertice_input.shape[1], :vertice_input.shape[1]].clone().detach().to(device=self.device)
+            # Generating the mask of the input vertices for the decoder
             memory_mask = enc_dec_mask(self.device, self.dataset, vertice_input.shape[1], hidden_states.shape[1])
+            # One layer of decoder
             vertice_out = self.transformer_decoder(vertice_input, hidden_states, tgt_mask=tgt_mask, memory_mask=memory_mask)
+            # Feed forward layer to generate the vertices
             vertice_out = self.vertice_map_r(vertice_out)
+            
+            # The speech representation is calculated from the last output of the decoder
+            # This is the line that consumes most of the running time
+            # Only if called with vertice_out, if it is called with vertice_out = torch.randn(1, 1, 70110), it is fast
             new_output = self.vertice_map(vertice_out[:,-1,:]).unsqueeze(1)
             new_output = new_output + style_emb
+
             vertice_emb = torch.cat((vertice_emb, new_output), 1)
 
         vertice_out = vertice_out + template
         return vertice_out
+

@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 import copy
 import math
+import time
 from wav2vec import Wav2Vec2Model
 
 # Temporal Bias, inspired by ALiBi: https://github.com/ofirpress/attention_with_linear_biases
@@ -159,14 +160,17 @@ class Faceformer(nn.Module):
             # One layer of decoder
             vertice_out = self.transformer_decoder(vertice_input, hidden_states, tgt_mask=tgt_mask, memory_mask=memory_mask)
             # Feed forward layer to generate the vertices
-            vertice_out = self.vertice_map_r(vertice_out)
-            
-            # The speech representation is calculated from the last output of the decoder
+
+            before = time.time()
             # This is the line that consumes most of the running time
-            # Only if called with vertice_out, if it is called with vertice_out = torch.randn(1, 1, 70110), it is fast
+            # The time increases as the input changes
+            vertice_out = self.vertice_map_r(vertice_out)
+            print(f"vertice_map_r time: {time.time() - before}")
+            
             new_output = self.vertice_map(vertice_out[:,-1,:]).unsqueeze(1)
             new_output = new_output + style_emb
 
+            # If this line is commented the self.vertice_map_r wont be executed longer.
             vertice_emb = torch.cat((vertice_emb, new_output), 1)
 
         vertice_out = vertice_out + template

@@ -92,7 +92,6 @@ def test_model(args):
         on_trace_ready=torch.profiler.tensorboard_trace_handler(f'./logs/faceformer_{args.int8_quantization}')) as prof:
         prediction = model.predict(audio_feature, template, one_hot)
     print(prof.key_averages(group_by_stack_n=5).table(sort_by="cpu_time_total", row_limit=20))
-    print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cpu_memory_usage", row_limit=20))
 
     print("Time for prediction: {}".format(time.time()-start_time))
     

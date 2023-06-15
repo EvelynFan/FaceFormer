@@ -165,6 +165,13 @@ class Faceformer(nn.Module):
             # This is the line that consumes most of the running time
             # The time increases as the input changes
             vertice_out = self.vertice_map_r(vertice_out)
+            # calculate min stev max and min of tensor
+            min = torch.min(vertice_out)
+            max = torch.max(vertice_out)
+            stdev = torch.std(vertice_out)
+            mean = torch.mean(vertice_out)
+            print(f"sum abs: {torch.sum(torch.abs(vertice_out))}")
+            print(f"min: {min}, max: {max}, stdev: {stdev}, mean: {mean}")
             print(f"vertice_map_r time: {time.time() - before}")
             
             new_output = self.vertice_map(vertice_out[:,-1,:]).unsqueeze(1)

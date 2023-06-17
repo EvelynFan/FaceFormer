@@ -165,7 +165,6 @@ class Faceformer(nn.Module):
 
             # Its just the shape that increases
             print(vertice_out.shape)
-            print(f"mean abs: {torch.sum(torch.abs(vertice_out))}")
 
             # This is the line that consumes most of the running time
             # The time increases as the input changes

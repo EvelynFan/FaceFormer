@@ -135,10 +135,11 @@ class Faceformer(nn.Module):
         loss = torch.mean(loss)
         return loss
 
-    def predict(self, audio, template, one_hot):
+    def predict(self, audio, template, one_hot, optimize_last_layer=False):
         template = template.unsqueeze(1) # (1,1, V*3)
         obj_embedding = self.obj_vector(one_hot)
         hidden_states = self.audio_encoder(audio, self.dataset).last_hidden_state
+        all_vertices_out_list = []
         if self.dataset == "BIWI":
             frame_num = hidden_states.shape[1]//2
         elif self.dataset == "vocaset":
@@ -161,24 +162,26 @@ class Faceformer(nn.Module):
             vertice_out = self.transformer_decoder(vertice_input, hidden_states, tgt_mask=tgt_mask, memory_mask=memory_mask)
             # Feed forward layer to generate the vertices
 
-            before = time.time()
-
-            # Its just the shape that increases
-            print(vertice_out.shape)
-
             # This is the line that consumes most of the running time
             # The time increases as the input changes
+            if optimize_last_layer:
+                vertice_out = vertice_out[:,-1,:]
             vertice_out = self.vertice_map_r(vertice_out)
-            # calculate min stev max and min of tensor
-            print(f"vertice_map_r time: {time.time() - before}")
             
             # Taking into account only the last prediction of the vertices
-            new_output = self.vertice_map(vertice_out[:,-1,:]).unsqueeze(1)
+            if not optimize_last_layer:
+                new_output = self.vertice_map(vertice_out[:,-1,:]).unsqueeze(1)
+            else:
+                new_output = self.vertice_map(vertice_out).unsqueeze(1)
             new_output = new_output + style_emb
 
             # If this line is commented the self.vertice_map_r wont be executed longer.
             vertice_emb = torch.cat((vertice_emb, new_output), 1)
+            if optimize_last_layer:
+                all_vertices_out_list.append(vertice_out)
 
+        if optimize_last_layer:
+            vertice_out = torch.stack(all_vertices_out_list, dim=1)
         vertice_out = vertice_out + template
         return vertice_out
 

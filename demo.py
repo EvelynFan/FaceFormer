@@ -90,7 +90,7 @@ def test_model(args):
         with_stack=True,
         experimental_config=torch._C._profiler._ExperimentalConfig(verbose=True),
         on_trace_ready=torch.profiler.tensorboard_trace_handler(f'./logs/faceformer_{args.int8_quantization}')) as prof:
-        prediction = model.predict(audio_feature, template, one_hot)
+        prediction = model.predict(audio_feature, template, one_hot, args.optimize_last_layer)
     print(prof.key_averages(group_by_stack_n=5).table(sort_by="cpu_time_total", row_limit=20))
 
     print("Time for prediction: {}".format(time.time()-start_time))
@@ -261,7 +261,9 @@ def main():
     parser.add_argument("--template_path", type=str, default="templates.pkl", help='path of the personalized templates')
     parser.add_argument("--render_template_path", type=str, default="templates", help='path of the mesh in BIWI/FLAME topology')
     parser.add_argument("--int8_quantization", type=str, default="", help='')
+    parser.add_argument("--optimize_last_layer", type=bool, default=False, help='Dont calculate linear layer for all')
     parser.add_argument("--set_seed", type=bool, default=False, help='')
+
 
     args = parser.parse_args()   
 

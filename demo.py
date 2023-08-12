@@ -25,7 +25,7 @@ def test_model(args):
 
     #build model
     model = Faceformer(args)
-    model.load_state_dict(torch.load(os.path.join(args.dataset, '{}.pth'.format(args.model_name))))
+    model.load_state_dict(torch.load(os.path.join(args.dataset, '{}.pth'.format(args.model_name)),  map_location=torch.device(args.device)))
     model = model.to(torch.device(args.device))
     model.eval()
 

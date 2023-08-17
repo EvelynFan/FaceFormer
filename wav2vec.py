@@ -111,7 +111,7 @@ class Wav2Vec2Model(Wav2Vec2Model):
             ] = 1
             attention_mask = attention_mask.flip([-1]).cumsum(-1).flip([-1]).bool()
 
-        hidden_states = self.feature_projection(hidden_states)
+        hidden_states, extract_features = self.feature_projection(hidden_states)
 
         if self.config.apply_spec_augment and self.training:
             batch_size, sequence_length, hidden_size = hidden_states.size()
